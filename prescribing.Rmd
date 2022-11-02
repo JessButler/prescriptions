@@ -139,6 +139,6 @@ For each prescription, details from the BNF were added from here https://applica
 
 Number of prescriptions and costs per item calculated as specified here https://www.isdscotland.org/Health-topics/Prescribing-and-medicines/_docs/Open_Data_Glossary_of_Terms.pdf?1 
 
-All code to produce this report is here 
+All code to produce this report is here https://github.com/JessButler/prescriptions
 
 Any questions or comments please email JessicaButler@abdn.ac.uk
