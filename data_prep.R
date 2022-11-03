@@ -1,9 +1,6 @@
 library(dplyr)
 
-#BNF data for all drugs
-#this open safely blog post 
-#https://www.bennett.ox.ac.uk/blog/2017/04/prescribing-data-bnf-codes/
-#gives an active link to the most recent BNF file here
+#BNF file
 #https://applications.nhsbsa.nhs.uk/infosystems/data/showDataSelector.do?reportId=126
 
 
@@ -26,14 +23,15 @@ rx <-
                                    sep = ",",
                                    na.strings = 
                                      c(NA_character_, ""))) %>%
-  as_tibble()
+  as_tibble() 
 
 
 #keep Grampian data only (code of S08000020)
+#exclude prescriptions that came from the hospital
 grampian <-
   rx %>%
-  filter(HBT == "S08000020")
-
+  filter(HBT == "S08000020",
+         GPPractice != 99998)
 
 #add BNF data to prescribing tables
 grampian <-
