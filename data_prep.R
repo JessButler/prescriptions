@@ -1,6 +1,6 @@
 library(dplyr)
 
-#BNF file
+#BNF file dowloaded from
 #https://applications.nhsbsa.nhs.uk/infosystems/data/showDataSelector.do?reportId=126
 
 bnf <-
@@ -39,3 +39,5 @@ grampian <-
 
 #Write Grampian data to file
 readr::write_csv(grampian, "grampian_rx.csv")
+
+boxplot(cars$speed)
