@@ -3,7 +3,6 @@ library(dplyr)
 #BNF file
 #https://applications.nhsbsa.nhs.uk/infosystems/data/showDataSelector.do?reportId=126
 
-
 bnf <-
   readr::read_csv("20220905_1662367590394_BNF_Code_Information.csv") %>%
   janitor::clean_names() %>%
