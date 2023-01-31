@@ -1,0 +1,145 @@
+---
+title: "Prescribing in Grampian"
+output: html_document
+---
+
+```{r, message = F, echo = F, warning = F}
+knitr::opts_chunk$set(message = F, echo = F, warning = F)
+```
+
+
+```{r}
+library(dplyr)
+library(gt)
+library(readr)
+
+#load data cleaned in data_prep.R
+grampian_rx <- read_csv("grampian_rx.csv") %>%
+  filter(!is.na(bnf_chemical_substance))
+
+bnf <- read_csv("bnf.csv")
+
+bnf_chemical_substance <- read_csv("bnf_chemical_substance.csv")
+
+```
+
+<br> 
+
+### Which drugs are prescribed the most?
+```{r}
+top_chemical_section <-
+grampian_rx %>%
+  group_by(bnf_section, bnf_chemical_substance) %>%
+  summarise(total_rx = sum(total_rx)) %>%
+  arrange(bnf_section, total_rx) %>%
+  slice_tail() %>%
+  ungroup() %>%
+  select(-total_rx)
+
+rx_summary_table <-
+  grampian_rx %>%
+  group_by(bnf_section) %>%
+  summarise(
+    total_rx = sum(total_rx)) %>%
+  arrange(desc(total_rx)) %>%
+  filter(total_rx >= 250000) %>%
+  left_join(., top_chemical_section, by = "bnf_section")
+
+rx_summary_table %>%
+  gt() %>%
+  cols_label(bnf_section = "Drug Class",
+             total_rx = "Total Annual Rx",
+             bnf_chemical_substance = "Most Prescribed Drug in Class") %>%
+  fmt_number(total_rx, 
+             decimals = 0,
+             use_seps = T) %>%
+  tab_options(table.align = "left",
+              data_row.padding = 0,
+              column_labels.font.weight = "bold")
+```
+
+<br>
+
+### Which drugs cost the most?
+```{r}
+cost_summary_table <-
+  grampian_rx %>%
+  group_by(bnf_chemical_substance) %>%
+  summarise(
+    total_cost = sum(total_cost),
+    total_rx = sum(total_rx),
+    cost_rx =
+      total_cost /
+      total_rx) %>%
+  arrange(desc(total_cost)) %>%
+  filter(total_cost >= 850000) %>%
+  left_join(., bnf_chemical_substance, by = "bnf_chemical_substance")
+
+cost_summary_table %>%
+  gt() %>%
+  cols_label(bnf_chemical_substance = "Drug",
+             total_cost = "Annual Cost",
+             total_rx = "Annual Rx",
+             cost_rx = "Cost per Rx",
+             bnf_section = "Drug Class") %>%
+  fmt_currency(c(total_cost, cost_rx),
+               decimals = 0,
+               currency = "GBP") %>%
+  fmt_number(total_rx, 
+             decimals = 0,
+             use_seps = T) %>%
+  tab_options(table.align = "left",
+              data_row.padding = 0,
+              column_labels.font.weight = "bold")
+```
+
+
+<br>  
+
+### Which classes of drugs cost the most?
+```{r}
+class_cost_table <-
+  grampian_rx %>%
+  group_by(bnf_section) %>%
+  summarise(
+    total_cost = sum(total_cost),
+    total_rx = sum(total_rx),
+    cost_rx =
+      total_cost /
+      total_rx) %>%
+  arrange(desc(total_cost)) %>%
+   filter(total_cost >= 1750000) 
+
+class_cost_table %>%
+  gt() %>%
+  cols_label(bnf_section = "Drug Class",
+             total_cost = "Annual Cost",
+             total_rx = "Annual Rx",
+             cost_rx = "Cost per Rx") %>%
+  fmt_currency(c(total_cost, cost_rx),
+               decimals = 0,
+               currency = "GBP") %>%
+  fmt_number(total_rx, 
+             decimals = 0,
+             use_seps = T) %>%
+  tab_options(table.align = "left",
+              data_row.padding = 0,
+              column_labels.font.weight = "bold")
+```
+
+<br> 
+
+### Data and Methods  
+This analysis includes all prescriptions in NHS Grampian dispensed outside of hospitals from November 2021 through October 2022.
+
+Generic and brand name medication has been combined by BNF chemical substance. 
+
+All prescribing data are available here https://www.opendata.nhs.scot/dataset/prescriptions-in-the-community
+
+For each prescription, drug class was added from the BNF available here https://applications.nhsbsa.nhs.uk/infosystems/data/showDataSelector.do?reportId=126
+
+Number of prescriptions and costs per item calculated as specified here https://www.isdscotland.org/Health-topics/Prescribing-and-medicines/_docs/Open_Data_Glossary_of_Terms.pdf?1 
+
+All code to produce this report is here https://github.com/JessButler/prescriptions
+
+Any questions or comments please email JessicaButler@abdn.ac.uk
