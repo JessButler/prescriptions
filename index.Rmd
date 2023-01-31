@@ -130,15 +130,17 @@ class_cost_table %>%
 <br> 
 
 ### Data and Methods  
-This analysis includes all prescriptions in NHS Grampian dispensed outside of hospitals from November 2021 through October 2022.
+This analysis includes all prescriptions in NHS Grampian dispensed outside of hospitals from November 2021 through October 2022.  
 
-Generic and brand name medication has been combined by BNF chemical substance. 
+All prescribing data were downloaded from here https://www.opendata.nhs.scot/dataset/prescriptions-in-the-community  
 
-All prescribing data are available here https://www.opendata.nhs.scot/dataset/prescriptions-in-the-community
+A drug is defined as all medication with the same BNF chemical substance name (regardless of dose). 
 
-For each prescription, drug class was added from the BNF available here https://applications.nhsbsa.nhs.uk/infosystems/data/showDataSelector.do?reportId=126
+A drug class is all medication in the same BNF section.  
 
-Number of prescriptions and costs per item calculated as specified here https://www.isdscotland.org/Health-topics/Prescribing-and-medicines/_docs/Open_Data_Glossary_of_Terms.pdf?1 
+BNF data were downloaded from here https://applications.nhsbsa.nhs.uk/infosystems/data/showDataSelector.do?reportId=126
+
+Number of prescriptions and costs per item was calculated as specified here https://www.isdscotland.org/Health-topics/Prescribing-and-medicines/_docs/Open_Data_Glossary_of_Terms.pdf?1 
 
 All code to produce this report is here https://github.com/JessButler/prescriptions
 
